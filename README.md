@@ -4,7 +4,7 @@
 **Due Date: Friday 26th April, 11:59 PM PST via Gradescope**
 
 ## Acknowledgements
-#Tester for commit
+
 This document is derived from
 https://jlpteaching.github.io/comparch/modules/dino%20cpu/assignment1/ which
 is originally derived from ECS 154B WQ 2023, which was previously derived from
