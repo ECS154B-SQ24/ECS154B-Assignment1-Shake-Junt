@@ -1,5 +1,3 @@
-// This file contains ALU control logic.
-
 package dinocpu.components
 
 import chisel3._
@@ -32,43 +30,44 @@ class ALUControl extends Module {
     val operation = Output(UInt(5.W))
   })
 
-  io.operation := "b11111".U // Invalid
+ //Your code goes here
 
-  //Your code goes here 
+//we only have to do R type - mari
 
-//Added Marina
-  when(io.aluop === "b001".U) { // 64 bit R-type {  //1 for 64-bit R-type
-      is("b0000000000".U) { io.operation := "b00001".U } // ADD
-      is("b0100000000".U) { io.operation := "b00010".U } // SUB
-      is("b0000000001".U) { io.operation := "b01010".U } // SLL
-      is("b0000000010".U) { io.operation := "b01011".U } // SLT
-      is("b0000000011".U) { io.operation := "b01100".U } // SLTU
-      is("b0000000100".U) { io.operation := "b00011".U } // XOR
-      is("b0000000101".U) { io.operation := "b01001".U } // SRL
-      is("b0100000101".U) { io.operation := "b01000".U } // SRA
-      is("b0000000110".U) { io.operation := "b00100".U } // OR
-      is("b0000000111".U) { io.operation := "b00101".U } // AND
-      is("b0000001000".U) { io.operation := "b01101".U } // MUL
-      is("b0000001001".U) { io.operation := "b01110".U } // MULH
-      is("b0000001010".U) { io.operation := "b01111".U } // MULHSU
-      is("b0000001011".U) { io.operation := "b10000".U } // MULHU
-      is("b0000001100".U) { io.operation := "b10001".U } // DIV
-      is("b0000001101".U) { io.operation := "b10010".U } // DIVU
-      is("b0000001110".U) { io.operation := "b10011".U } // REM
-      is("b0000001111".U) { io.operation := "b10100".U } // REMU
-  } 
+ io.operation := "b11111".U // Invalid
 
-when(io.aluop === "b011".U) { // 32 bit R-type  //3 for 32-bit R-type
-  is("b0000000000".U) { io.operation := "b00000".U } // ADDW
-  is("b0100000000".U) { io.operation := "b00010".U } // SUBW
-  is("b0000000001".U) { io.operation := "b10011".U } // SLLW
-  is("b0000000101".U) { io.operation := "b10101".U } // SRLW
-  is("b0100000101".U) { io.operation := "b10001".U } // SRAW
-  is("b0000001000".U) { io.operation := "b00101".U } //MULW
-  is("b0000001100".U) { io.operation := "b01001".U } // DIVW
-  is("b0000001101".U) { io.operation := "b01100".U }  //DIVUW
-  is("b0000001110".U) { io.operation := "b11010".U }  // REMW
-  is("b0000001111".U) { io.operation := "b11001".U }  // REMUW
-    }
+when(io.aluop === "b001".U && io.funct3 === "b000".U && io.funct7 === "b0000000".U) { io.operation := "b00001".U} // 64 ADD 
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b000".U && io.funct7 === "b0000001".U) { io.operation := "b00110".U}// 64 MUL
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b000".U && io.funct7 === "b0100000".U) { io.operation := "b00100".U}// 64 SUB
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b001".U && io.funct7 === "b0000000".U) {io.operation := "b10010".U}// 64 SLL
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b001".U && io.funct7 === "b0000001".U) {io.operation := "b00111".U}// 64 MULH 
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b010".U && io.funct7 === "b0000000".U) {io.operation := "b10110".U}// 64 SLT 
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b010".U && io.funct7 === "b0000001".U) {io.operation := "b11000".U}// 64 MULHSU 
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b011".U && io.funct7 === "b0000000".U) {io.operation := "b10111".U}// 64 SLTU 
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b011".U && io.funct7 === "b0000001".U) { io.operation := "b01000".U}// 64 MULHU 
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b100".U && io.funct7 === "b0000000".U) {io.operation := "b01111".U }// 64 XOR 
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b100".U && io.funct7 === "b0000001".U) { io.operation := "b01011".U} // 64 DIV 
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b101".U && io.funct7 === "b0000000".U) {io.operation := "b10100".U}// 64 SRL 
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b101".U && io.funct7 === "b0000001".U) {io.operation := "b01010".U}// 64 DIVU 
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b101".U && io.funct7 === "b0100000".U) {io.operation := "b10000".U}// 64 SRA 
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b110".U && io.funct7 === "b0000000".U) {io.operation := "b01110".U}// 64 OR 
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b110".U && io.funct7 === "b0000001".U) { io.operation := "b11100".U} // 64 REM 
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b111".U && io.funct7 === "b0000000".U) {io.operation := "b01101".U}// 64 AND 
+  .elsewhen(io.aluop === "b001".U && io.funct3 === "b111".U && io.funct7 === "b0000001".U) {io.operation := "b11011".U}// 64 REMU 
   
+
+//this is the 32 bit part
+  .elsewhen(io.aluop === "b011".U && io.funct3 === "b000".U && io.funct7 === "b0000000".U) {io.operation := "b00000".U}// 32 ADDW 
+  .elsewhen(io.aluop === "b011".U && io.funct3 === "b000".U && io.funct7 === "b0000001".U) {io.operation := "b00101".U}// 32 MULW 
+  .elsewhen(io.aluop === "b011".U && io.funct3 === "b000".U && io.funct7 === "b0100000".U) {io.operation := "b00010".U}// 32 SUBW 
+  .elsewhen(io.aluop === "b011".U && io.funct3 === "b001".U && io.funct7 === "b0000000".U) {io.operation := "b10011".U} // 32 SLLW 
+  .elsewhen(io.aluop === "b011".U && io.funct3 === "b100".U && io.funct7 === "b0000001".U) {io.operation := "b01001".U}// 32 DIVW 
+  .elsewhen(io.aluop === "b011".U && io.funct3 === "b101".U && io.funct7 === "b0000000".U) {io.operation := "b10101".U}// 32 SRLW 
+  .elsewhen(io.aluop === "b011".U && io.funct3 === "b101".U && io.funct7 === "b0000001".U) {io.operation := "b01100".U } // 32 DIVUW 
+  .elsewhen(io.aluop === "b011".U && io.funct3 === "b101".U && io.funct7 === "b0100000".U) { io.operation := "b10001".U}// 32 SRAW 
+  .elsewhen(io.aluop === "b011".U && io.funct3 === "b110".U && io.funct7 === "b0000001".U) {io.operation := "b11010".U}// 32 REMW 
+  .elsewhen(io.aluop === "b011".U && io.funct3 === "b111".U && io.funct7 === "b0000001".U) {io.operation := "b11001".U}// 32 REMUW 
+  .otherwise{
+    io.operation := "b11111".U //invalid
   }
+}
