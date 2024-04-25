@@ -44,6 +44,22 @@ class SingleCycleCPU(implicit val conf: CPUConfig) extends BaseCPU {
 
   //Your code goes here
 
+
+  //alu control to alu wires connections based on our diagram, added -Mari
+  alu.io.operation := aluControl.io.operation
+  alu.io.operand1 := registers.io.readdata1
+  alu.io.operand2 := registers.io.readdata2
+  registers.io.writedata := alu.io.result
+  aluControl.io.aluop := control.io.aluop
+  aluControl.io.funct7 := instruction(31,25)
+  registers.io.readreg2 := instruction(24,20)
+  registers.io.readreg1 := instruction(19, 15)
+  aluControl.io.funct3 := instruction(14, 12)
+  registers.io.writereg := instruction(11,7)
+  control.io.opcode := instruction(6,0)
+  //missing the wen wire bc idk wth it does - Mari
+  
+
 }
 
 /*
