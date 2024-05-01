@@ -43,24 +43,43 @@ class SingleCycleCPU(implicit val conf: CPUConfig) extends BaseCPU {
   }
 
   //Your code goes here
+  // instruction will be a 32 bit long array, split in following lines
+  // opcode
+  control.io.opcode := instruction(6,0) 
+  // rd
+  registers.io.writereg := instruction(11,7)
+  // funct 3
+  aluControl.io.funct3 := instruction(14,12)  
+  // rs1
+  registers.io.readreg1 := instruction(19,15)
+  // rs2
+  registers.io.readreg2 := instruction(24,20)
+  // funct 7
+  aluControl.io.funct7 := instruction(31,25)
+
+  // wire the result back to register's  
+  registers.io.writedata := alu.io.result
+  
+  // check validity of registers
+   when (registers.io.writereg =/= 0.U && control.io.writeback_valid === 1.U) {
+    registers.io.wen := true.B
+  } .otherwise {
+    registers.io.wen := false.B
+  }
 
 
-  //alu control to alu wires connections based on our diagram, added -Mari
+
+  // wire aluop and operation  
+  aluControl.io.aluop := control.io.aluop
   alu.io.operation := aluControl.io.operation
+
+  // wire input x and y to readdata
   alu.io.operand1 := registers.io.readdata1
   alu.io.operand2 := registers.io.readdata2
-  registers.io.writedata := alu.io.result
-  aluControl.io.aluop := control.io.aluop
-  aluControl.io.funct7 := instruction(31,25)
-  registers.io.readreg2 := instruction(24,20)
-  registers.io.readreg1 := instruction(19, 15)
-  aluControl.io.funct3 := instruction(14, 12)
-  registers.io.writereg := instruction(11,7)
-  control.io.opcode := instruction(6,0)
-  //missing the wen wire bc idk wth it does - Mari
-  
+  pc := pc + 4.U  //incrementing pc for next instruction
 
 }
+
 
 /*
  * Object to make it easier to print information about the CPU
