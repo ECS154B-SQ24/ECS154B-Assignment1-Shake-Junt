@@ -43,40 +43,31 @@ class SingleCycleCPU(implicit val conf: CPUConfig) extends BaseCPU {
   }
 
   //Your code goes here
-  // instruction will be a 32 bit long array, split in following lines
-  // opcode
-  control.io.opcode := instruction(6,0) 
-  // rd
-  registers.io.writereg := instruction(11,7)
-  // funct 3
-  aluControl.io.funct3 := instruction(14,12)  
-  // rs1
-  registers.io.readreg1 := instruction(19,15)
-  // rs2
-  registers.io.readreg2 := instruction(24,20)
-  // funct 7
-  aluControl.io.funct7 := instruction(31,25)
 
-  // wire the result back to register's  
+  // Assign registers to correct bits in instruction 
+
+  control.io.opcode := instruction(6,0)         // Opcode
+  registers.io.writereg := instruction(11,7)    // rd
+  registers.io.readreg1 := instruction(19,15)   // rs1
+  registers.io.readreg2 := instruction(24,20)   // rs2
+  aluControl.io.funct3 := instruction(14,12)    // funct 3
+  aluControl.io.funct7 := instruction(31,25)    // funct 7
+
+  // Combine all results to send back to registers  
   registers.io.writedata := alu.io.result
   
   // check validity of registers
-   when (registers.io.writereg =/= 0.U && control.io.writeback_valid === 1.U) {
-    registers.io.wen := true.B
-  } .otherwise {
-    registers.io.wen := false.B
-  }
-
-
-
-  // wire aluop and operation  
+  registers.io.wen := (registers.io.writereg =/= 0.U) && (control.io.writeback_valid === 1.U)
+  
+  // Set ALU control signals
   aluControl.io.aluop := control.io.aluop
   alu.io.operation := aluControl.io.operation
 
-  // wire input x and y to readdata
+  // Connect ALU input and control singals
   alu.io.operand1 := registers.io.readdata1
   alu.io.operand2 := registers.io.readdata2
-  pc := pc + 4.U  //incrementing pc for next instruction
+
+  pc := pc + 4.U  //Increment PC
 
 }
 
